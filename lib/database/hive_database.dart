@@ -21,20 +21,23 @@ class HiveBoxes {
 }
 
 class HiveDatabase {
+  static bool _initialized = false;
+  
   static Future<void> init() async {
+    if (_initialized) return;
     await Hive.initFlutter();
     
     // Register Adapters
-    Hive.registerAdapter(UserModelAdapter());
-    Hive.registerAdapter(ProductModelAdapter());
-    Hive.registerAdapter(CustomerModelAdapter());
-    Hive.registerAdapter(SupplierModelAdapter());
-    Hive.registerAdapter(InvoiceItemModelAdapter());
-    Hive.registerAdapter(InvoiceModelAdapter());
-    Hive.registerAdapter(PurchaseItemModelAdapter());
-    Hive.registerAdapter(PurchaseModelAdapter());
-    Hive.registerAdapter(ExpenseModelAdapter());
-    Hive.registerAdapter(StaffModelAdapter());
+    if (!Hive.isAdapterRegistered(0)) Hive.registerAdapter(UserModelAdapter());
+    if (!Hive.isAdapterRegistered(1)) Hive.registerAdapter(ProductModelAdapter());
+    if (!Hive.isAdapterRegistered(2)) Hive.registerAdapter(CustomerModelAdapter());
+    if (!Hive.isAdapterRegistered(3)) Hive.registerAdapter(SupplierModelAdapter());
+    if (!Hive.isAdapterRegistered(4)) Hive.registerAdapter(InvoiceItemModelAdapter());
+    if (!Hive.isAdapterRegistered(5)) Hive.registerAdapter(InvoiceModelAdapter());
+    if (!Hive.isAdapterRegistered(6)) Hive.registerAdapter(PurchaseItemModelAdapter());
+    if (!Hive.isAdapterRegistered(7)) Hive.registerAdapter(PurchaseModelAdapter());
+    if (!Hive.isAdapterRegistered(8)) Hive.registerAdapter(ExpenseModelAdapter());
+    if (!Hive.isAdapterRegistered(9)) Hive.registerAdapter(StaffModelAdapter());
     
     await Future.wait([
       Hive.openBox<UserModel>(HiveBoxes.users),
@@ -46,5 +49,7 @@ class HiveDatabase {
       Hive.openBox<ExpenseModel>(HiveBoxes.expenses),
       Hive.openBox<StaffModel>(HiveBoxes.staff),
     ]);
+    
+    _initialized = true;
   }
 }

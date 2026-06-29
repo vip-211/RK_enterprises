@@ -3,7 +3,7 @@ import 'package:rk_enterprises/models/sync_model.dart';
 
 part 'staff_model.g.dart';
 
-@HiveType(typeId: 6)
+@HiveType(typeId: 9)
 class StaffModel extends HiveObject implements SyncModel {
   @override
   @HiveField(0)

@@ -8,7 +8,7 @@ part of 'staff_model.dart';
 
 class StaffModelAdapter extends TypeAdapter<StaffModel> {
   @override
-  final int typeId = 6;
+  final int typeId = 9;
 
   @override
   StaffModel read(BinaryReader reader) {
