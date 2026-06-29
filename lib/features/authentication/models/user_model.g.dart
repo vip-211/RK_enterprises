@@ -27,13 +27,14 @@ class UserModelAdapter extends TypeAdapter<UserModel> {
       createdAt: fields[7] as DateTime,
       updatedAt: fields[8] as DateTime,
       deletedAt: fields[9] as DateTime?,
+      password: fields[10] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, UserModel obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -53,7 +54,9 @@ class UserModelAdapter extends TypeAdapter<UserModel> {
       ..writeByte(8)
       ..write(obj.updatedAt)
       ..writeByte(9)
-      ..write(obj.deletedAt);
+      ..write(obj.deletedAt)
+      ..writeByte(10)
+      ..write(obj.password);
   }
 
   @override

@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rk_enterprises/features/staff/repositories/staff_repository.dart';
 import 'package:rk_enterprises/features/staff/models/staff_model.dart';
+import 'package:rk_enterprises/features/authentication/models/user_model.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:rk_enterprises/database/hive_database.dart';
+import 'package:uuid/uuid.dart';
+import 'package:rk_enterprises/core/utils/password_utils.dart';
 
 class StaffEntryScreen extends ConsumerStatefulWidget {
   const StaffEntryScreen({super.key});
@@ -16,6 +21,8 @@ class _StaffEntryScreenState extends ConsumerState<StaffEntryScreen> {
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _salaryController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   
   String _selectedRole = 'Sales';
   bool _isLoading = false;
@@ -27,6 +34,8 @@ class _StaffEntryScreenState extends ConsumerState<StaffEntryScreen> {
     _nameController.dispose();
     _phoneController.dispose();
     _salaryController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -47,12 +56,28 @@ class _StaffEntryScreenState extends ConsumerState<StaffEntryScreen> {
       );
 
       final repo = ref.read(staffRepositoryProvider);
-      await repo.addStaff(staff);
+      final staffId = await repo.addStaff(staff);
+      
+      // Auto-generate User Account for Login
+      if (_passwordController.text.isNotEmpty) {
+        final userBox = Hive.box<UserModel>(HiveBoxes.users);
+        final user = UserModel(
+          id: staffId, // Match Staff ID
+          name: _nameController.text.trim(),
+          email: _emailController.text.trim(),
+          phone: _phoneController.text.trim(),
+          role: _selectedRole,
+          password: PasswordUtils.hashPassword(_passwordController.text),
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
+        await userBox.put(staffId, user);
+      }
       
       if (mounted) {
         Navigator.pop(context, true);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Staff member saved successfully!')),
+          const SnackBar(content: Text('Staff member and login saved!')),
         );
       }
     }
@@ -115,6 +140,20 @@ class _StaffEntryScreenState extends ConsumerState<StaffEntryScreen> {
                 controller: _salaryController,
                 decoration: const InputDecoration(labelText: 'Monthly Salary (₹)', prefixIcon: Icon(Icons.payments)),
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              ),
+              const SizedBox(height: 24),
+              const Text('App Login Credentials', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.blue)),
+              const Divider(),
+              TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(labelText: 'Email Address (Optional)', prefixIcon: Icon(Icons.email)),
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _passwordController,
+                decoration: const InputDecoration(labelText: 'Login Password', prefixIcon: Icon(Icons.lock)),
+                obscureText: true,
               ),
               const SizedBox(height: 32),
               ElevatedButton(

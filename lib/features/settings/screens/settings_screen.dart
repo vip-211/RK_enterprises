@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rk_enterprises/theme/theme_provider.dart';
 import 'package:rk_enterprises/sync/sync_manager.dart';
+import 'package:rk_enterprises/features/settings/screens/print_settings_screen.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -60,26 +61,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
-  void _showPrintSettingsDialog() {
-    showDialog(
-      context: context,
-      builder: (c) => AlertDialog(
-        title: const Text('Print Settings'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RadioListTile(value: 1, groupValue: 1, onChanged: (v) {}, title: const Text('A4 Size (PDF)')),
-            RadioListTile(value: 2, groupValue: 1, onChanged: (v) {}, title: const Text('2-inch Thermal Printer')),
-            RadioListTile(value: 3, groupValue: 1, onChanged: (v) {}, title: const Text('3-inch Thermal Printer')),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(c), child: const Text('Close')),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeProvider);
@@ -104,10 +85,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.print),
-                title: const Text('Print Settings'),
-                subtitle: const Text('A4, Thermal, Headers'),
+                title: const Text('Print & Invoice Settings'),
+                subtitle: const Text('Manage shop details, paper size, templates'),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: _showPrintSettingsDialog,
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const PrintSettingsScreen()));
+                },
               ),
             ]
           ),

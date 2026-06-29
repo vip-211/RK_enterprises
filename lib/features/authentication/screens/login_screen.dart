@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:rk_enterprises/features/authentication/repositories/auth_repository.dart';
 import 'package:rk_enterprises/features/dashboard/screens/dashboard_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -31,6 +32,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     
     if (user != null && mounted) {
       ref.read(authStateProvider.notifier).state = user;
+      
+      // Save session
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('loggedInUserId', user.id);
+      
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const DashboardScreen()),
       );

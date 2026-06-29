@@ -41,6 +41,9 @@ class UserModel implements SyncModel {
   @override
   final DateTime? deletedAt;
 
+  @HiveField(10)
+  final String? password;
+
   UserModel({
     required this.id,
     required this.name,
@@ -52,6 +55,7 @@ class UserModel implements SyncModel {
     required this.createdAt,
     required this.updatedAt,
     this.deletedAt,
+    this.password,
   });
 
   @override
@@ -67,6 +71,7 @@ class UserModel implements SyncModel {
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'deletedAt': deletedAt?.toIso8601String(),
+      'password': password,
     };
   }
 
@@ -82,6 +87,7 @@ class UserModel implements SyncModel {
       createdAt: DateTime.parse(map['createdAt']),
       updatedAt: DateTime.parse(map['updatedAt']),
       deletedAt: map['deletedAt'] != null ? DateTime.parse(map['deletedAt']) : null,
+      password: map['password'],
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rk_enterprises/features/billing/models/invoice_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:rk_enterprises/database/hive_database.dart';
+import 'package:rk_enterprises/core/widgets/empty_state_widget.dart';
 
 class InvoiceListScreen extends ConsumerWidget {
   const InvoiceListScreen({super.key});
@@ -27,7 +28,13 @@ class InvoiceListScreen extends ConsumerWidget {
         builder: (context, box, _) {
           final invoices = box.values.where((i) => i.deletedAt == null).toList();
           return invoices.isEmpty
-              ? const Center(child: Text('No invoices found.'))
+              ? EmptyStateWidget(
+                  title: 'No Invoices Yet',
+                  message: 'Create your first invoice to get started.',
+                  icon: Icons.receipt_long,
+                  actionLabel: 'New Invoice',
+                  onActionPressed: () => Navigator.pushNamed(context, '/invoice-entry'),
+                )
               : ListView.builder(
                   itemCount: invoices.length,
                   itemBuilder: (context, index) {

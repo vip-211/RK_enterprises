@@ -12,6 +12,8 @@ import 'package:rk_enterprises/features/settings/screens/settings_screen.dart';
 import 'package:rk_enterprises/features/settings/screens/settings_screen.dart';
 import 'package:rk_enterprises/features/dashboard/providers/dashboard_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:rk_enterprises/core/widgets/network_indicator.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -31,9 +33,11 @@ class DashboardScreen extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
-            onPressed: () {
+            onPressed: () async {
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.remove('loggedInUserId');
               ref.read(authStateProvider.notifier).state = null;
-              Navigator.of(context).pushReplacementNamed('/');
+              Navigator.of(context).pushReplacementNamed('/login');
             },
           )
         ],
@@ -144,7 +148,9 @@ class DashboardScreen extends ConsumerWidget {
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.red),
               title: const Text('Logout', style: TextStyle(color: Colors.red)),
-              onTap: () {
+              onTap: () async {
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.remove('loggedInUserId');
                 ref.read(authStateProvider.notifier).state = null;
                 Navigator.of(context).pushReplacementNamed('/login');
               },
@@ -153,12 +159,16 @@ class DashboardScreen extends ConsumerWidget {
           ],
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Welcome, ${user?.name ?? 'User'}!', style: Theme.of(context).textTheme.headlineMedium),
+      body: Column(
+        children: [
+          const NetworkIndicator(),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Welcome, ${user?.name ?? 'User'}!', style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: 8),
             
             if (isAdmin) ...[
@@ -271,6 +281,9 @@ class DashboardScreen extends ConsumerWidget {
             ],
           ],
         ),
+      ),
+          ),
+        ],
       ),
     );
   }

@@ -10,6 +10,11 @@ import 'package:rk_enterprises/sync/sync_manager.dart';
 import 'package:rk_enterprises/services/notification_service.dart';
 import 'package:rk_enterprises/services/remote_config_service.dart';
 import 'package:rk_enterprises/core/widgets/skeleton.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:rk_enterprises/features/authentication/repositories/auth_repository.dart';
+import 'package:rk_enterprises/features/authentication/models/user_model.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:rk_enterprises/features/dashboard/screens/dashboard_screen.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -60,6 +65,24 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
       ]);
 
       if (mounted) {
+        final prefs = await SharedPreferences.getInstance();
+        final userId = prefs.getString('loggedInUserId');
+        if (userId != null) {
+          try {
+            final userBox = Hive.box<UserModel>(HiveBoxes.users);
+            final user = userBox.get(userId);
+            if (user != null) {
+              ref.read(authStateProvider.notifier).state = user;
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => const DashboardScreen()),
+              );
+              return;
+            }
+          } catch (e) {
+             // fallback to login if box fails
+          }
+        }
+        
         Navigator.of(context).pushReplacementNamed('/login');
       }
     } catch (e) {

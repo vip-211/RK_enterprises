@@ -13,7 +13,7 @@ class StaffRepository {
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
   }
 
-  Future<void> addStaff(StaffModel staff) async {
+  Future<String> addStaff(StaffModel staff) async {
     final newStaff = StaffModel(
       id: const Uuid().v4(),
       name: staff.name,
@@ -26,6 +26,7 @@ class StaffRepository {
     );
     await _box.put(newStaff.id, newStaff);
     SyncManager().syncAllPendingData();
+    return newStaff.id;
   }
 
   Future<void> updateStaff(StaffModel staff) async {

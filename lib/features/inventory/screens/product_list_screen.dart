@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rk_enterprises/features/inventory/models/product_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:rk_enterprises/database/hive_database.dart';
+import 'package:rk_enterprises/core/widgets/empty_state_widget.dart';
 
 class ProductListScreen extends ConsumerWidget {
   const ProductListScreen({super.key});
@@ -14,6 +15,13 @@ class ProductListScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Products'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.print),
+            tooltip: 'Print Barcodes',
+            onPressed: () {
+              Navigator.pushNamed(context, '/barcode-print');
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
@@ -27,7 +35,13 @@ class ProductListScreen extends ConsumerWidget {
         builder: (context, box, _) {
           final products = box.values.where((p) => p.deletedAt == null).toList();
           return products.isEmpty
-              ? const Center(child: Text('No products found.'))
+              ? EmptyStateWidget(
+                  title: 'No Products Yet',
+                  message: 'Add your first product to start tracking inventory.',
+                  icon: Icons.inventory_2_outlined,
+                  actionLabel: 'Add Product',
+                  onActionPressed: () => Navigator.pushNamed(context, '/product-entry'),
+                )
               : ListView.builder(
                   itemCount: products.length,
                   itemBuilder: (context, index) {

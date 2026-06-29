@@ -4,6 +4,7 @@ import 'package:rk_enterprises/features/expenses/models/expense_model.dart';
 import 'package:intl/intl.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:rk_enterprises/database/hive_database.dart';
+import 'package:rk_enterprises/core/widgets/empty_state_widget.dart';
 
 class ExpenseListScreen extends ConsumerWidget {
   const ExpenseListScreen({super.key});
@@ -28,7 +29,13 @@ class ExpenseListScreen extends ConsumerWidget {
         builder: (context, box, _) {
           final expenses = box.values.where((e) => e.deletedAt == null).toList();
           return expenses.isEmpty
-              ? const Center(child: Text('No expenses found.'))
+              ? EmptyStateWidget(
+                  title: 'No Expenses Yet',
+                  message: 'Track your daily expenses here.',
+                  icon: Icons.money_off_outlined,
+                  actionLabel: 'Add Expense',
+                  onActionPressed: () => Navigator.pushNamed(context, '/expense-entry'),
+                )
               : ListView.builder(
                   itemCount: expenses.length,
                   itemBuilder: (context, index) {

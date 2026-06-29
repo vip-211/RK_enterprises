@@ -7,6 +7,7 @@ import 'package:rk_enterprises/features/billing/models/invoice_model.dart';
 import 'package:rk_enterprises/features/purchases/models/purchase_model.dart';
 import 'package:rk_enterprises/features/expenses/models/expense_model.dart';
 import 'package:rk_enterprises/features/staff/models/staff_model.dart';
+import 'package:rk_enterprises/features/settings/models/print_settings_model.dart';
 
 class HiveBoxes {
   static const String users = 'usersBox';
@@ -17,7 +18,7 @@ class HiveBoxes {
   static const String purchases = 'purchasesBox';
   static const String expenses = 'expensesBox';
   static const String staff = 'staffBox';
-  // Add other boxes as we go
+  static const String printSettings = 'printSettingsBox';
 }
 
 class HiveDatabase {
@@ -38,6 +39,7 @@ class HiveDatabase {
     if (!Hive.isAdapterRegistered(7)) Hive.registerAdapter(PurchaseModelAdapter());
     if (!Hive.isAdapterRegistered(8)) Hive.registerAdapter(ExpenseModelAdapter());
     if (!Hive.isAdapterRegistered(9)) Hive.registerAdapter(StaffModelAdapter());
+    if (!Hive.isAdapterRegistered(20)) Hive.registerAdapter(PrintSettingsModelAdapter());
     
     await Future.wait([
       Hive.openBox<UserModel>(HiveBoxes.users),
@@ -48,6 +50,7 @@ class HiveDatabase {
       Hive.openBox<PurchaseModel>(HiveBoxes.purchases),
       Hive.openBox<ExpenseModel>(HiveBoxes.expenses),
       Hive.openBox<StaffModel>(HiveBoxes.staff),
+      Hive.openBox<PrintSettingsModel>(HiveBoxes.printSettings),
     ]);
     
     _initialized = true;

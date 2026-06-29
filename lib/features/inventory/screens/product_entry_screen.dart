@@ -153,7 +153,12 @@ class _ProductEntryScreenState extends ConsumerState<ProductEntryScreen> {
                       controller: _salePriceController,
                       decoration: const InputDecoration(labelText: 'Sale Price (₹) *', prefixIcon: Icon(Icons.sell)),
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      validator: (val) => val == null || val.isEmpty ? 'Required' : null,
+                      validator: (val) {
+                        if (val == null || val.isEmpty) return 'Required';
+                        final numVal = double.tryParse(val);
+                        if (numVal == null || numVal < 0) return 'Invalid price';
+                        return null;
+                      },
                     ),
                   ),
                   const SizedBox(width: 16),

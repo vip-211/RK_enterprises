@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rk_enterprises/features/customers/models/customer_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:rk_enterprises/database/hive_database.dart';
+import 'package:rk_enterprises/core/widgets/empty_state_widget.dart';
 
 class CustomerListScreen extends ConsumerWidget {
   const CustomerListScreen({super.key});
@@ -27,7 +28,13 @@ class CustomerListScreen extends ConsumerWidget {
         builder: (context, box, _) {
           final customers = box.values.where((c) => c.deletedAt == null).toList();
           return customers.isEmpty
-              ? const Center(child: Text('No customers found.'))
+              ? EmptyStateWidget(
+                  title: 'No Customers Yet',
+                  message: 'Add customers to track their outstanding balances.',
+                  icon: Icons.groups_outlined,
+                  actionLabel: 'Add Customer',
+                  onActionPressed: () => Navigator.pushNamed(context, '/customer-entry'),
+                )
               : ListView.builder(
                   itemCount: customers.length,
                   itemBuilder: (context, index) {

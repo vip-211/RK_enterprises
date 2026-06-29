@@ -19,6 +19,7 @@ import 'package:flutter/foundation.dart';
 import 'package:rk_enterprises/features/customers/screens/customer_entry_screen.dart';
 import 'package:rk_enterprises/features/inventory/screens/product_entry_screen.dart';
 import 'package:rk_enterprises/features/expenses/screens/expense_entry_screen.dart';
+import 'package:rk_enterprises/features/inventory/screens/barcode_print_screen.dart';
 import 'package:rk_enterprises/features/suppliers/screens/supplier_entry_screen.dart';
 import 'package:rk_enterprises/features/purchases/screens/purchase_entry_screen.dart';
 import 'package:rk_enterprises/features/billing/screens/invoice_entry_screen.dart';
@@ -29,6 +30,36 @@ import 'package:rk_enterprises/theme/theme_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Production-level error handling
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    // In a real production app, send details to Crashlytics here
+  };
+  
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, color: Colors.red, size: 64),
+              const SizedBox(height: 16),
+              const Text('Oops! Something went wrong.', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              Text(
+                kReleaseMode ? 'Please try restarting the app.' : details.exceptionAsString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.grey),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  };
   
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -67,6 +98,7 @@ class MyApp extends ConsumerWidget {
         '/invoice-entry': (context) => const InvoiceEntryScreen(),
         '/staff-list': (context) => const StaffListScreen(),
         '/staff-entry': (context) => const StaffEntryScreen(),
+        '/barcode-print': (context) => const BarcodePrintScreen(),
       },
     );
   }

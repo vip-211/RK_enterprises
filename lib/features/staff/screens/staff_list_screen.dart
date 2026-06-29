@@ -4,6 +4,7 @@ import 'package:rk_enterprises/features/staff/repositories/staff_repository.dart
 import 'package:rk_enterprises/features/staff/models/staff_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:rk_enterprises/database/hive_database.dart';
+import 'package:rk_enterprises/core/widgets/empty_state_widget.dart';
 
 class StaffListScreen extends ConsumerWidget {
   const StaffListScreen({super.key});
@@ -29,7 +30,13 @@ class StaffListScreen extends ConsumerWidget {
         builder: (context, box, _) {
           final staffList = box.values.where((s) => s.deletedAt == null).toList();
           return staffList.isEmpty
-              ? const Center(child: Text('No staff members found. Tap + to add.'))
+              ? EmptyStateWidget(
+                  title: 'No Staff Members',
+                  message: 'Add your employees here to manage them.',
+                  icon: Icons.badge_outlined,
+                  actionLabel: 'Add Staff',
+                  onActionPressed: () => Navigator.pushNamed(context, '/staff-entry'),
+                )
               : ListView.builder(
                   itemCount: staffList.length,
                   itemBuilder: (context, index) {
