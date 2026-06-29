@@ -23,11 +23,14 @@ class NotificationService {
   static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   Future<void> init() async {
-    // Background messages and topics are not supported identically on Web without service workers.
-    // Wrap them in kIsWeb checks to prevent blank page crashes.
-    if (!kIsWeb) {
-      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    // FCM requires a service worker and VAPID keys on Web which we haven't configured.
+    // Skip entirely on web to avoid blank page crashes.
+    if (kIsWeb) {
+      _logger.i('Push notifications are disabled on Web to prevent missing service worker crashes.');
+      return;
     }
+
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
     NotificationSettings settings = await _firebaseMessaging.requestPermission(
       alert: true,
