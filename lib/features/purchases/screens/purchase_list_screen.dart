@@ -1,0 +1,50 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rk_enterprises/features/purchases/repositories/purchase_repository.dart';
+
+class PurchaseListScreen extends ConsumerWidget {
+  const PurchaseListScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final repo = ref.watch(purchaseRepositoryProvider);
+    final purchases = repo.getPurchases();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Purchases'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Create Purchase screen coming soon!')));
+            },
+          ),
+        ],
+      ),
+      body: purchases.isEmpty
+          ? const Center(child: Text('No purchases found.'))
+          : ListView.builder(
+              itemCount: purchases.length,
+              itemBuilder: (context, index) {
+                final purchase = purchases[index];
+                return ListTile(
+                  leading: const CircleAvatar(child: Icon(Icons.shopping_cart)),
+                  title: Text(purchase.purchaseNumber),
+                  subtitle: Text(purchase.supplierName),
+                  trailing: Text(
+                    '₹${purchase.grandTotal}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
+                  ),
+                  onTap: () {
+                    // Navigate to details
+                  },
+                );
+              },
+            ),
+    );
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "1024478255871",
+    "firebase_url": "https://lakhu-acnvtu.firebaseio.com",
+    "project_id": "lakhu-acnvtu",
+    "storage_bucket": "lakhu-acnvtu.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1024478255871:android:4ddf6476a2ca0830c70aca",
+        "android_client_info": {
+          "package_name": "com.example.rk_enterprises"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHzneiRuI-_KLnfZ4i_JILNt3ANWu02g4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
