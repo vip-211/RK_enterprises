@@ -3,9 +3,10 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 @pragma('vm:entry-point')
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
   print("Handling a background message: ${message.messageId}");
@@ -22,7 +23,11 @@ class NotificationService {
   static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   Future<void> init() async {
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    // Background messages and topics are not supported identically on Web without service workers.
+    // Wrap them in kIsWeb checks to prevent blank page crashes.
+    if (!kIsWeb) {
+      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    }
 
     NotificationSettings settings = await _firebaseMessaging.requestPermission(
       alert: true,
@@ -36,9 +41,11 @@ class NotificationService {
       _logger.w('User declined or has not accepted permission');
     }
 
-    // Subscribe to all users topic
-    await _firebaseMessaging.subscribeToTopic('company_invoices');
-    _logger.i('Subscribed to topic: company_invoices');
+    if (!kIsWeb) {
+      // Subscribe to all users topic
+      await _firebaseMessaging.subscribeToTopic('company_invoices');
+      _logger.i('Subscribed to topic: company_invoices');
+    }
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       _logger.i('Got a message whilst in the foreground!');

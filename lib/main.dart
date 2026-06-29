@@ -14,6 +14,8 @@ import 'package:rk_enterprises/services/remote_config_service.dart';
 import 'package:rk_enterprises/services/notification_service.dart';
 import 'package:rk_enterprises/features/billing/screens/invoice_detail_screen.dart';
 
+import 'package:flutter/foundation.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
@@ -31,9 +33,11 @@ void main() async {
   final remoteConfig = RemoteConfigService(FirebaseRemoteConfig.instance);
   await remoteConfig.init();
   
-  // Initialize Background Sync
-  await BackgroundWorker.init();
-  BackgroundWorker.schedulePeriodicSync();
+  if (!kIsWeb) {
+    // Initialize Background Sync
+    await BackgroundWorker.init();
+    BackgroundWorker.schedulePeriodicSync();
+  }
   
   // Initialize SyncManager listener
   SyncManager().init();
