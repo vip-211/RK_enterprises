@@ -69,4 +69,19 @@ class UserModel implements SyncModel {
       'deletedAt': deletedAt?.toIso8601String(),
     };
   }
+
+  factory UserModel.fromMap(Map<String, dynamic> map) {
+    return UserModel(
+      id: map['id'],
+      name: map['name'],
+      email: map['email'],
+      phone: map['phone'],
+      role: map['role'],
+      isSynced: map['isSynced'] ?? true,
+      operation: map['operation'] ?? SyncOperation.insert,
+      createdAt: DateTime.parse(map['createdAt']),
+      updatedAt: DateTime.parse(map['updatedAt']),
+      deletedAt: map['deletedAt'] != null ? DateTime.parse(map['deletedAt']) : null,
+    );
+  }
 }

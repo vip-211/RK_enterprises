@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rk_enterprises/features/inventory/repositories/product_repository.dart';
 import 'package:rk_enterprises/features/inventory/models/product_model.dart';
+import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
 class ProductEntryScreen extends ConsumerStatefulWidget {
   const ProductEntryScreen({super.key});
@@ -12,9 +13,9 @@ class ProductEntryScreen extends ConsumerStatefulWidget {
 
 class _ProductEntryScreenState extends ConsumerState<ProductEntryScreen> {
   final _formKey = GlobalKey<FormState>();
-  
   final _nameController = TextEditingController();
   final _skuController = TextEditingController();
+  final _barcodeController = TextEditingController();
   final _salePriceController = TextEditingController();
   final _purchasePriceController = TextEditingController();
   final _taxRateController = TextEditingController(text: '18');
@@ -26,6 +27,7 @@ class _ProductEntryScreenState extends ConsumerState<ProductEntryScreen> {
   void dispose() {
     _nameController.dispose();
     _skuController.dispose();
+    _barcodeController.dispose();
     _salePriceController.dispose();
     _purchasePriceController.dispose();
     _taxRateController.dispose();
@@ -41,14 +43,20 @@ class _ProductEntryScreenState extends ConsumerState<ProductEntryScreen> {
         id: '', // Handled by repository
         name: _nameController.text.trim(),
         sku: _skuController.text.trim(),
-        description: '',
+        barcode: _barcodeController.text.trim(),
         purchasePrice: double.tryParse(_purchasePriceController.text) ?? 0,
-        salePrice: double.tryParse(_salePriceController.text) ?? 0,
-        taxRate: double.tryParse(_taxRateController.text) ?? 18,
-        stockQuantity: double.tryParse(_stockQuantityController.text) ?? 0,
-        minStockLevel: 5,
+        sellingPrice: double.tryParse(_salePriceController.text) ?? 0,
+        mrp: double.tryParse(_salePriceController.text) ?? 0,
+        gstPercentage: double.tryParse(_taxRateController.text) ?? 18,
+        hsnCode: '',
+        openingStock: double.tryParse(_stockQuantityController.text) ?? 0,
+        currentStock: double.tryParse(_stockQuantityController.text) ?? 0,
+        minimumStock: 5,
+        brand: '',
+        category: '',
+        unit: 'PCS',
         isSynced: false,
-        operation: null,
+        operation: 'insert',
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );
@@ -95,9 +103,47 @@ class _ProductEntryScreenState extends ConsumerState<ProductEntryScreen> {
                 validator: (val) => val == null || val.isEmpty ? 'Please enter item name' : null,
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                controller: _skuController,
-                decoration: const InputDecoration(labelText: 'Item Code / SKU', prefixIcon: Icon(Icons.qr_code)),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _skuController,
+                      decoration: const InputDecoration(labelText: 'Item Code / SKU', prefixIcon: Icon(Icons.code)),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _barcodeController,
+                      decoration: InputDecoration(
+                        labelText: 'Barcode', 
+                        prefixIcon: const Icon(Icons.qr_code),
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.camera_alt),
+                          onPressed: () async {
+                            String? res = await SimpleBarcodeScanner.scanBarcode(
+                              context,
+                              barcodeAppBar: const BarcodeAppBar(
+                                appBarTitle: 'Scan Barcode',
+                                centerTitle: false,
+                                enableBackButton: true,
+                                backButtonIcon: Icon(Icons.arrow_back_ios),
+                              ),
+                              isShowFlashIcon: true,
+                              delayMillis: 500,
+                              cameraFace: CameraFace.back,
+                            );
+                            if (res != null && res != '-1') {
+                              setState(() {
+                                _barcodeController.text = res;
+                              });
+                            }
+                          },
+                        )
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
               Row(

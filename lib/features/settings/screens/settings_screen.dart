@@ -18,7 +18,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     
     // Simulate slight delay for UI feedback
     await Future.delayed(const Duration(milliseconds: 800));
-    SyncManager().scheduleSync();
+    SyncManager().syncAllPendingData();
     
     if (mounted) {
       setState(() => _isSyncing = false);

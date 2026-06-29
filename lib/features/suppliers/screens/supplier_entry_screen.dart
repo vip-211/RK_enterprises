@@ -42,14 +42,13 @@ class _SupplierEntryScreenState extends ConsumerState<SupplierEntryScreen> {
       final supplier = SupplierModel(
         id: '', // Handled by repository
         name: _nameController.text.trim(),
-        contactPerson: _contactPersonController.text.trim(),
         phone: _phoneController.text.trim(),
         email: _emailController.text.trim(),
         gstin: _gstinController.text.trim(),
         address: _addressController.text.trim(),
         outstandingBalance: double.tryParse(_balanceController.text) ?? 0,
         isSynced: false,
-        operation: null,
+        operation: 'insert',
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );

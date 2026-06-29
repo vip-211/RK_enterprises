@@ -9,6 +9,8 @@ import 'package:rk_enterprises/features/purchases/screens/purchase_list_screen.d
 import 'package:rk_enterprises/features/expenses/screens/expense_list_screen.dart';
 import 'package:rk_enterprises/features/reports/screens/reports_screen.dart';
 import 'package:rk_enterprises/features/settings/screens/settings_screen.dart';
+import 'package:rk_enterprises/features/settings/screens/settings_screen.dart';
+import 'package:rk_enterprises/features/dashboard/providers/dashboard_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class DashboardScreen extends ConsumerWidget {
@@ -17,7 +19,10 @@ class DashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authStateProvider);
+    final metricsAsync = ref.watch(dashboardMetricsProvider);
     
+    final metrics = metricsAsync.value ?? DashboardMetrics();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dashboard'),
@@ -139,20 +144,19 @@ class DashboardScreen extends ConsumerWidget {
             const SizedBox(height: 8),
             const Text('Here is your business overview today.', style: TextStyle(color: Colors.grey)),
             const SizedBox(height: 24),
-            // KPI Widgets
             Row(
               children: [
-                Expanded(child: _buildKPIWidget(context, 'Today\'s Sales', '₹ 15,240', Icons.trending_up, Colors.green)),
+                Expanded(child: _buildKPIWidget(context, 'Today\'s Sales', '₹ ${metrics.todaysSales.toStringAsFixed(0)}', Icons.trending_up, Colors.green)),
                 const SizedBox(width: 16),
-                Expanded(child: _buildKPIWidget(context, 'Outstanding', '₹ 4,500', Icons.warning_amber_rounded, Colors.orange)),
+                Expanded(child: _buildKPIWidget(context, 'Outstanding', '₹ ${metrics.outstanding.toStringAsFixed(0)}', Icons.warning_amber_rounded, Colors.orange)),
               ],
             ),
             const SizedBox(height: 16),
             Row(
               children: [
-                Expanded(child: _buildKPIWidget(context, 'Low Stock', '12 Items', Icons.inventory, Colors.red)),
+                Expanded(child: _buildKPIWidget(context, 'Low Stock', '${metrics.lowStockCount} Items', Icons.inventory, Colors.red)),
                 const SizedBox(width: 16),
-                Expanded(child: _buildKPIWidget(context, 'Purchases', '₹ 8,900', Icons.shopping_cart, Colors.blue)),
+                Expanded(child: _buildKPIWidget(context, 'Purchases', '₹ ${metrics.monthPurchases.toStringAsFixed(0)}', Icons.shopping_cart, Colors.blue)),
               ],
             ),
             const SizedBox(height: 32),

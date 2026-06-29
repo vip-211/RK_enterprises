@@ -41,7 +41,7 @@ class _StaffEntryScreenState extends ConsumerState<StaffEntryScreen> {
         role: _selectedRole,
         salary: double.tryParse(_salaryController.text) ?? 0,
         isSynced: false,
-        operation: null,
+        operation: 'insert',
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );

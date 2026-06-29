@@ -52,11 +52,10 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
         id: '', 
         category: _selectedCategory,
         amount: double.tryParse(_amountController.text) ?? 0,
-        expenseDate: _expenseDate,
+        date: _expenseDate,
         notes: _noteController.text.trim(),
-        paymentMethod: 'Cash',
         isSynced: false,
-        operation: null,
+        operation: 'insert',
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rk_enterprises/features/billing/repositories/invoice_repository.dart';
 import 'package:rk_enterprises/features/billing/models/invoice_model.dart';
 import 'package:intl/intl.dart';
+import 'package:rk_enterprises/core/widgets/skeleton.dart';
 
 class InvoiceDetailScreen extends ConsumerWidget {
   final String invoiceId;
@@ -17,7 +18,23 @@ class InvoiceDetailScreen extends ConsumerWidget {
       future: _getInvoice(ref, invoiceId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+          return const Scaffold(
+            body: SafeArea(
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Skeleton(width: 200, height: 24),
+                    SizedBox(height: 32),
+                    SkeletonList(itemCount: 3),
+                    Divider(height: 32),
+                    Skeleton(width: double.infinity, height: 100),
+                  ],
+                ),
+              ),
+            ),
+          );
         }
         
         final invoice = snapshot.data;

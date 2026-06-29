@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:rk_enterprises/features/inventory/repositories/product_repository.dart';
 import 'package:rk_enterprises/features/inventory/models/product_model.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:rk_enterprises/database/hive_database.dart';
 
 class ProductListScreen extends ConsumerWidget {
   const ProductListScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final repo = ref.watch(productRepositoryProvider);
-    final products = repo.getProducts();
 
     return Scaffold(
       appBar: AppBar(
@@ -23,23 +22,29 @@ class ProductListScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: products.isEmpty
-          ? const Center(child: Text('No products found.'))
-          : ListView.builder(
-              itemCount: products.length,
-              itemBuilder: (context, index) {
-                final product = products[index];
-                return ListTile(
-                  leading: const Icon(Icons.inventory),
-                  title: Text(product.name),
-                  subtitle: Text('Stock: ${product.currentStock} ${product.unit} | Price: ₹${product.sellingPrice}'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    // TODO: Navigate to EditProductScreen
+      body: ValueListenableBuilder<Box<ProductModel>>(
+        valueListenable: Hive.box<ProductModel>(HiveBoxes.products).listenable(),
+        builder: (context, box, _) {
+          final products = box.values.where((p) => p.deletedAt == null).toList();
+          return products.isEmpty
+              ? const Center(child: Text('No products found.'))
+              : ListView.builder(
+                  itemCount: products.length,
+                  itemBuilder: (context, index) {
+                    final product = products[index];
+                    return ListTile(
+                      leading: const Icon(Icons.inventory),
+                      title: Text(product.name),
+                      subtitle: Text('Stock: ${product.currentStock} ${product.unit} | Price: ₹${product.sellingPrice}'),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () {
+                        // TODO: Navigate to EditProductScreen
+                      },
+                    );
                   },
                 );
-              },
-            ),
+        },
+      ),
     );
   }
 }

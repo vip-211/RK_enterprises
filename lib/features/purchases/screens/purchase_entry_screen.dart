@@ -60,12 +60,13 @@ class _PurchaseEntryScreenState extends ConsumerState<PurchaseEntryScreen> {
         supplierId: _selectedSupplier!.id,
         supplierName: _selectedSupplier!.name,
         purchaseDate: _purchaseDate,
-        referenceBillNo: _billNoController.text.trim(),
-        totalAmount: double.tryParse(_amountController.text) ?? 0,
+        purchaseNumber: _billNoController.text.trim(),
+        items: [], // Simplified: items added later
+        grandTotal: double.tryParse(_amountController.text) ?? 0,
+        paymentMethod: 'Cash',
         amountPaid: 0, // Simplified: assume unpaid initially, add payment later
-        notes: _notesController.text.trim(),
         isSynced: false,
-        operation: null,
+        operation: 'insert',
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );

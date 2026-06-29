@@ -79,4 +79,21 @@ class SupplierModel implements SyncModel {
       'deletedAt': deletedAt?.toIso8601String(),
     };
   }
+
+  factory SupplierModel.fromMap(Map<String, dynamic> map) {
+    return SupplierModel(
+      id: map['id'],
+      name: map['name'],
+      phone: map['phone'],
+      email: map['email'],
+      gstin: map['gstin'],
+      outstandingBalance: map['outstandingBalance'],
+      address: map['address'],
+      isSynced: map['isSynced'] ?? true,
+      operation: map['operation'] ?? SyncOperation.insert,
+      createdAt: DateTime.parse(map['createdAt']),
+      updatedAt: DateTime.parse(map['updatedAt']),
+      deletedAt: map['deletedAt'] != null ? DateTime.parse(map['deletedAt']) : null,
+    );
+  }
 }

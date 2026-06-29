@@ -27,7 +27,7 @@ class StaffModel extends HiveObject implements SyncModel {
 
   @override
   @HiveField(6)
-  final SyncOperation? operation;
+  final String operation;
 
   @override
   @HiveField(7)
@@ -62,7 +62,7 @@ class StaffModel extends HiveObject implements SyncModel {
       'role': role,
       'salary': salary,
       'isSynced': isSynced,
-      'operation': operation?.toString(),
+      'operation': operation,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'deletedAt': deletedAt?.toIso8601String(),
@@ -77,10 +77,7 @@ class StaffModel extends HiveObject implements SyncModel {
       role: map['role'],
       salary: map['salary'],
       isSynced: map['isSynced'],
-      operation: SyncOperation.values.firstWhere(
-        (e) => e.toString() == map['operation'], 
-        orElse: () => SyncOperation.insert
-      ),
+      operation: map['operation'] ?? SyncOperation.insert,
       createdAt: DateTime.parse(map['createdAt']),
       updatedAt: DateTime.parse(map['updatedAt']),
       deletedAt: map['deletedAt'] != null ? DateTime.parse(map['deletedAt']) : null,

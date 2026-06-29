@@ -124,4 +124,30 @@ class ProductModel implements SyncModel {
       'deletedAt': deletedAt?.toIso8601String(),
     };
   }
+
+  factory ProductModel.fromMap(Map<String, dynamic> map) {
+    return ProductModel(
+      id: map['id'],
+      name: map['name'],
+      sku: map['sku'],
+      barcode: map['barcode'],
+      purchasePrice: map['purchasePrice'],
+      sellingPrice: map['sellingPrice'],
+      mrp: map['mrp'],
+      gstPercentage: map['gstPercentage'],
+      hsnCode: map['hsnCode'],
+      openingStock: map['openingStock'],
+      currentStock: map['currentStock'],
+      minimumStock: map['minimumStock'],
+      brand: map['brand'],
+      category: map['category'],
+      unit: map['unit'],
+      imageUrl: map['imageUrl'],
+      isSynced: map['isSynced'] ?? true,
+      operation: map['operation'] ?? SyncOperation.insert,
+      createdAt: DateTime.parse(map['createdAt']),
+      updatedAt: DateTime.parse(map['updatedAt']),
+      deletedAt: map['deletedAt'] != null ? DateTime.parse(map['deletedAt']) : null,
+    );
+  }
 }

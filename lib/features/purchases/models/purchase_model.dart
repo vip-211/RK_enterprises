@@ -37,6 +37,16 @@ class PurchaseItemModel {
       'totalAmount': totalAmount,
     };
   }
+
+  factory PurchaseItemModel.fromMap(Map<String, dynamic> map) {
+    return PurchaseItemModel(
+      productId: map['productId'],
+      productName: map['productName'],
+      quantity: map['quantity'],
+      purchasePrice: map['purchasePrice'],
+      totalAmount: map['totalAmount'],
+    );
+  }
 }
 
 @HiveType(typeId: 7)
@@ -124,5 +134,24 @@ class PurchaseModel implements SyncModel {
       'updatedAt': updatedAt.toIso8601String(),
       'deletedAt': deletedAt?.toIso8601String(),
     };
+  }
+
+  factory PurchaseModel.fromMap(Map<String, dynamic> map) {
+    return PurchaseModel(
+      id: map['id'],
+      purchaseNumber: map['purchaseNumber'],
+      purchaseDate: DateTime.parse(map['purchaseDate']),
+      supplierId: map['supplierId'],
+      supplierName: map['supplierName'],
+      items: (map['items'] as List<dynamic>).map((e) => PurchaseItemModel.fromMap(e)).toList(),
+      grandTotal: map['grandTotal'],
+      paymentMethod: map['paymentMethod'],
+      amountPaid: map['amountPaid'],
+      isSynced: map['isSynced'] ?? true,
+      operation: map['operation'] ?? SyncOperation.insert,
+      createdAt: DateTime.parse(map['createdAt']),
+      updatedAt: DateTime.parse(map['updatedAt']),
+      deletedAt: map['deletedAt'] != null ? DateTime.parse(map['deletedAt']) : null,
+    );
   }
 }

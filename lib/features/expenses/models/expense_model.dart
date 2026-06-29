@@ -69,4 +69,19 @@ class ExpenseModel implements SyncModel {
       'deletedAt': deletedAt?.toIso8601String(),
     };
   }
+
+  factory ExpenseModel.fromMap(Map<String, dynamic> map) {
+    return ExpenseModel(
+      id: map['id'],
+      category: map['category'],
+      amount: map['amount'],
+      date: DateTime.parse(map['date']),
+      notes: map['notes'],
+      isSynced: map['isSynced'] ?? true,
+      operation: map['operation'] ?? SyncOperation.insert,
+      createdAt: DateTime.parse(map['createdAt']),
+      updatedAt: DateTime.parse(map['updatedAt']),
+      deletedAt: map['deletedAt'] != null ? DateTime.parse(map['deletedAt']) : null,
+    );
+  }
 }

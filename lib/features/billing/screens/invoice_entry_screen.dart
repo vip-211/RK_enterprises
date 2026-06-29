@@ -7,6 +7,7 @@ import 'package:rk_enterprises/features/customers/models/customer_model.dart';
 import 'package:rk_enterprises/features/inventory/repositories/product_repository.dart';
 import 'package:rk_enterprises/features/inventory/models/product_model.dart';
 import 'package:intl/intl.dart';
+import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
 class InvoiceEntryScreen extends ConsumerStatefulWidget {
   const InvoiceEntryScreen({super.key});
@@ -49,7 +50,7 @@ class _InvoiceEntryScreenState extends ConsumerState<InvoiceEntryScreen> {
                     items: products.map((ProductModel prod) {
                       return DropdownMenuItem<ProductModel>(
                         value: prod,
-                        child: Text('${prod.name} (₹${prod.salePrice})'),
+                        child: Text('${prod.name} (₹${prod.sellingPrice})'),
                       );
                     }).toList(),
                     onChanged: (val) {
@@ -73,25 +74,24 @@ class _InvoiceEntryScreenState extends ConsumerState<InvoiceEntryScreen> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    if (selectedProduct != null) {
+                    final p = selectedProduct;
+                    if (p != null) {
                       final qty = double.tryParse(qtyController.text) ?? 1;
-                      final unitPrice = selectedProduct!.salePrice;
-                      final gstPct = selectedProduct!.taxRate;
                       
                       // Calculate item totals
-                      final amountBeforeTax = unitPrice * qty;
-                      final gstAmount = amountBeforeTax * (gstPct / 100);
-                      final total = amountBeforeTax + gstAmount;
+                      final basePrice = p.sellingPrice * qty;
+                      final tax = basePrice * (p.gstPercentage / 100);
+                      final total = basePrice + tax;
 
                       setState(() {
                         _items.add(InvoiceItemModel(
-                          productId: selectedProduct!.id,
-                          productName: selectedProduct!.name,
+                          productId: p.id,
+                          productName: p.name,
                           quantity: qty,
-                          unitPrice: unitPrice,
+                          unitPrice: p.sellingPrice,
                           discountAmount: 0,
-                          gstPercentage: gstPct,
-                          gstAmount: gstAmount,
+                          gstPercentage: p.gstPercentage,
+                          gstAmount: tax,
                           totalAmount: total,
                         ));
                       });
@@ -106,6 +106,87 @@ class _InvoiceEntryScreenState extends ConsumerState<InvoiceEntryScreen> {
         );
       }
     );
+  }
+
+  void _scanProduct() async {
+    final products = ref.read(productRepositoryProvider).getProducts();
+    if (products.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please add products to inventory first.')));
+      return;
+    }
+
+    bool keepScanning = true;
+    while (keepScanning) {
+      if (!mounted) break;
+      String? res = await SimpleBarcodeScanner.scanBarcode(
+        context,
+        barcodeAppBar: const BarcodeAppBar(
+          appBarTitle: 'Scan Product Barcode',
+          centerTitle: false,
+          enableBackButton: true,
+          backButtonIcon: Icon(Icons.arrow_back_ios),
+        ),
+        isShowFlashIcon: true,
+        delayMillis: 500,
+        cameraFace: CameraFace.back,
+      );
+
+      if (res != null && res != '-1') {
+        final match = products.where((p) => p.barcode == res || p.sku == res).toList();
+        if (!mounted) return;
+        if (match.isNotEmpty) {
+          final p = match.first;
+          final existingIndex = _items.indexWhere((item) => item.productId == p.id);
+          
+          setState(() {
+            if (existingIndex >= 0) {
+              final existing = _items[existingIndex];
+              final newQty = existing.quantity + 1;
+              final basePrice = p.sellingPrice * newQty;
+              final tax = basePrice * (p.gstPercentage / 100);
+              final total = basePrice + tax;
+              
+              _items[existingIndex] = InvoiceItemModel(
+                productId: existing.productId,
+                productName: existing.productName,
+                quantity: newQty,
+                unitPrice: existing.unitPrice,
+                discountAmount: existing.discountAmount,
+                gstPercentage: existing.gstPercentage,
+                gstAmount: tax,
+                totalAmount: total,
+              );
+            } else {
+              final qty = 1.0;
+              final basePrice = p.sellingPrice * qty;
+              final tax = basePrice * (p.gstPercentage / 100);
+              final total = basePrice + tax;
+              
+              _items.add(InvoiceItemModel(
+                productId: p.id,
+                productName: p.name,
+                quantity: qty,
+                unitPrice: p.sellingPrice,
+                discountAmount: 0,
+                gstPercentage: p.gstPercentage,
+                gstAmount: tax,
+                totalAmount: total,
+              ));
+            }
+          });
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Added ${p.name}')));
+          }
+        } else {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Product not found for barcode: $res')));
+          }
+          keepScanning = false;
+        }
+      } else {
+        keepScanning = false; // User cancelled or closed scanner
+      }
+    }
   }
 
   void _saveInvoice() async {
@@ -148,7 +229,7 @@ class _InvoiceEntryScreenState extends ConsumerState<InvoiceEntryScreen> {
       amountPaid: grandTotal, 
       notes: '',
       isSynced: false,
-      operation: null,
+      operation: 'insert',
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
@@ -264,10 +345,23 @@ class _InvoiceEntryScreenState extends ConsumerState<InvoiceEntryScreen> {
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _addProduct,
-        icon: const Icon(Icons.add),
-        label: const Text('Add Item'),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton.extended(
+            heroTag: 'btn_scan',
+            onPressed: _scanProduct,
+            icon: const Icon(Icons.qr_code_scanner),
+            label: const Text('Scan Item'),
+          ),
+          const SizedBox(height: 16),
+          FloatingActionButton.extended(
+            heroTag: 'btn_add',
+            onPressed: _addProduct,
+            icon: const Icon(Icons.add),
+            label: const Text('Add Item Manually'),
+          ),
+        ],
       ),
     );
   }

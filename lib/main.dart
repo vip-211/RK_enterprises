@@ -24,6 +24,7 @@ import 'package:rk_enterprises/features/purchases/screens/purchase_entry_screen.
 import 'package:rk_enterprises/features/billing/screens/invoice_entry_screen.dart';
 import 'package:rk_enterprises/features/staff/screens/staff_list_screen.dart';
 import 'package:rk_enterprises/features/staff/screens/staff_entry_screen.dart';
+import 'package:rk_enterprises/features/splash/screens/splash_screen.dart';
 import 'package:rk_enterprises/theme/theme_provider.dart';
 
 void main() async {
@@ -32,25 +33,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  
-  // Initialize Hive
-  await HiveDatabase.init();
-  
-  // Init Notifications
-  await NotificationService().init();
-  
-  // Init Remote Config
-  final remoteConfig = RemoteConfigService(FirebaseRemoteConfig.instance);
-  await remoteConfig.init();
-  
-  if (!kIsWeb) {
-    // Initialize Background Sync
-    await BackgroundWorker.init();
-    BackgroundWorker.schedulePeriodicSync();
-  }
-  
-  // Initialize SyncManager listener
-  SyncManager().init();
   
   runApp(const ProviderScope(child: MyApp()));
 }
@@ -71,7 +53,8 @@ class MyApp extends ConsumerWidget {
       navigatorKey: NotificationService.navigatorKey,
       initialRoute: '/',
       routes: {
-        '/': (context) => const LoginScreen(),
+        '/': (context) => const SplashScreen(),
+        '/login': (context) => const LoginScreen(),
         '/invoice-detail': (context) {
           final id = ModalRoute.of(context)!.settings.arguments as String;
           return InvoiceDetailScreen(invoiceId: id);

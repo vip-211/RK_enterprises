@@ -23,7 +23,7 @@ class StaffModelAdapter extends TypeAdapter<StaffModel> {
       role: fields[3] as String,
       salary: fields[4] as double,
       isSynced: fields[5] as bool,
-      operation: fields[6] as SyncOperation?,
+      operation: fields[6] as String,
       createdAt: fields[7] as DateTime,
       updatedAt: fields[8] as DateTime,
       deletedAt: fields[9] as DateTime?,

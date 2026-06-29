@@ -25,7 +25,7 @@ class StaffRepository {
       updatedAt: DateTime.now(),
     );
     await _box.put(newStaff.id, newStaff);
-    SyncManager().scheduleSync();
+    SyncManager().syncAllPendingData();
   }
 
   Future<void> updateStaff(StaffModel staff) async {
@@ -40,7 +40,7 @@ class StaffRepository {
       updatedAt: DateTime.now(),
     );
     await _box.put(staff.id, updatedStaff);
-    SyncManager().scheduleSync();
+    SyncManager().syncAllPendingData();
   }
 
   Future<void> deleteStaff(String id) async {
@@ -58,7 +58,7 @@ class StaffRepository {
         deletedAt: DateTime.now(),
       );
       await _box.put(id, deletedStaff);
-      SyncManager().scheduleSync();
+      SyncManager().syncAllPendingData();
     }
   }
 }
