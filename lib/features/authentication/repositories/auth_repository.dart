@@ -11,17 +11,53 @@ class AuthRepository {
     // Mock login logic - in real app, call Firebase Auth then sync with Hive
     // For now, if no user exists, create a dummy one
     if (_userBox.isEmpty) {
-      final dummyUser = UserModel(
+      final owner = UserModel(
         id: const Uuid().v4(),
-        name: 'Admin User',
-        email: email,
+        name: 'Shop Owner',
+        email: 'owner@rk.com',
         phone: '1234567890',
-        role: 'Super Admin',
+        role: 'Admin',
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );
-      await _userBox.put(dummyUser.id, dummyUser);
-      return dummyUser;
+      final staff1 = UserModel(
+        id: const Uuid().v4(),
+        name: 'Ramesh (Cashier)',
+        email: 'ramesh@rk.com',
+        phone: '9876543210',
+        role: 'Cashier',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+      final staff2 = UserModel(
+        id: const Uuid().v4(),
+        name: 'Suresh (Cashier)',
+        email: 'suresh@rk.com',
+        phone: '9876543211',
+        role: 'Cashier',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+      final staff3 = UserModel(
+        id: const Uuid().v4(),
+        name: 'Mukesh (Cashier)',
+        email: 'mukesh@rk.com',
+        phone: '9876543212',
+        role: 'Cashier',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+      
+      await _userBox.put(owner.id, owner);
+      await _userBox.put(staff1.id, staff1);
+      await _userBox.put(staff2.id, staff2);
+      await _userBox.put(staff3.id, staff3);
+      
+      if (email == 'owner@rk.com') return owner;
+      if (email == 'ramesh@rk.com') return staff1;
+      if (email == 'suresh@rk.com') return staff2;
+      if (email == 'mukesh@rk.com') return staff3;
+      return null;
     }
     
     // Find first user with matching email

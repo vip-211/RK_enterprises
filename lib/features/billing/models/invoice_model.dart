@@ -132,6 +132,12 @@ class InvoiceModel implements SyncModel {
   @override
   final DateTime? deletedAt;
 
+  @HiveField(19)
+  final String? staffId;
+
+  @HiveField(20)
+  final String? staffName;
+
   InvoiceModel({
     required this.id,
     required this.invoiceNumber,
@@ -152,6 +158,8 @@ class InvoiceModel implements SyncModel {
     required this.createdAt,
     required this.updatedAt,
     this.deletedAt,
+    this.staffId,
+    this.staffName,
   });
 
   @override
@@ -176,6 +184,8 @@ class InvoiceModel implements SyncModel {
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'deletedAt': deletedAt?.toIso8601String(),
+      'staffId': staffId,
+      'staffName': staffName,
     };
   }
 
@@ -200,6 +210,8 @@ class InvoiceModel implements SyncModel {
       createdAt: DateTime.parse(map['createdAt']),
       updatedAt: DateTime.parse(map['updatedAt']),
       deletedAt: map['deletedAt'] != null ? DateTime.parse(map['deletedAt']) : null,
+      staffId: map['staffId'],
+      staffName: map['staffName'],
     );
   }
 }

@@ -91,13 +91,15 @@ class InvoiceModelAdapter extends TypeAdapter<InvoiceModel> {
       createdAt: fields[16] as DateTime,
       updatedAt: fields[17] as DateTime,
       deletedAt: fields[18] as DateTime?,
+      staffId: fields[19] as String?,
+      staffName: fields[20] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, InvoiceModel obj) {
     writer
-      ..writeByte(19)
+      ..writeByte(21)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -135,7 +137,11 @@ class InvoiceModelAdapter extends TypeAdapter<InvoiceModel> {
       ..writeByte(17)
       ..write(obj.updatedAt)
       ..writeByte(18)
-      ..write(obj.deletedAt);
+      ..write(obj.deletedAt)
+      ..writeByte(19)
+      ..write(obj.staffId)
+      ..writeByte(20)
+      ..write(obj.staffName);
   }
 
   @override

@@ -6,6 +6,7 @@ import 'package:rk_enterprises/features/customers/repositories/customer_reposito
 import 'package:rk_enterprises/features/customers/models/customer_model.dart';
 import 'package:rk_enterprises/features/inventory/repositories/product_repository.dart';
 import 'package:rk_enterprises/features/inventory/models/product_model.dart';
+import 'package:rk_enterprises/features/authentication/repositories/auth_repository.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
@@ -212,6 +213,8 @@ class _InvoiceEntryScreenState extends ConsumerState<InvoiceEntryScreen> {
     final amountBeforeRound = (subTotal - _discount) + totalGst;
     final grandTotal = amountBeforeRound.roundToDouble();
     final roundOff = grandTotal - amountBeforeRound;
+    
+    final currentUser = ref.read(authStateProvider);
 
     final invoice = InvoiceModel(
       id: '',
@@ -232,6 +235,8 @@ class _InvoiceEntryScreenState extends ConsumerState<InvoiceEntryScreen> {
       operation: 'insert',
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
+      staffId: currentUser?.id,
+      staffName: currentUser?.name,
     );
 
     await ref.read(invoiceRepositoryProvider).addInvoice(invoice);
