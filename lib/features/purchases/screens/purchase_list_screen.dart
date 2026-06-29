@@ -17,7 +17,7 @@ class PurchaseListScreen extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Create Purchase screen coming soon!')));
+              Navigator.pushNamed(context, '/purchase-entry');
             },
           ),
         ],

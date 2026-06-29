@@ -16,6 +16,16 @@ import 'package:rk_enterprises/features/billing/screens/invoice_detail_screen.da
 
 import 'package:flutter/foundation.dart';
 
+import 'package:rk_enterprises/features/customers/screens/customer_entry_screen.dart';
+import 'package:rk_enterprises/features/inventory/screens/product_entry_screen.dart';
+import 'package:rk_enterprises/features/expenses/screens/expense_entry_screen.dart';
+import 'package:rk_enterprises/features/suppliers/screens/supplier_entry_screen.dart';
+import 'package:rk_enterprises/features/purchases/screens/purchase_entry_screen.dart';
+import 'package:rk_enterprises/features/billing/screens/invoice_entry_screen.dart';
+import 'package:rk_enterprises/features/staff/screens/staff_list_screen.dart';
+import 'package:rk_enterprises/features/staff/screens/staff_entry_screen.dart';
+import 'package:rk_enterprises/theme/theme_provider.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
@@ -45,14 +55,18 @@ void main() async {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
+
     return MaterialApp(
       title: 'RK Enterprises',
       theme: AppTheme.lightTheme,
+      darkTheme: ThemeData.dark(), // Simple dark theme fallback
+      themeMode: themeMode,
       debugShowCheckedModeBanner: false,
       navigatorKey: NotificationService.navigatorKey,
       initialRoute: '/',
@@ -62,6 +76,14 @@ class MyApp extends StatelessWidget {
           final id = ModalRoute.of(context)!.settings.arguments as String;
           return InvoiceDetailScreen(invoiceId: id);
         },
+        '/customer-entry': (context) => const CustomerEntryScreen(),
+        '/product-entry': (context) => const ProductEntryScreen(),
+        '/expense-entry': (context) => const ExpenseEntryScreen(),
+        '/supplier-entry': (context) => const SupplierEntryScreen(),
+        '/purchase-entry': (context) => const PurchaseEntryScreen(),
+        '/invoice-entry': (context) => const InvoiceEntryScreen(),
+        '/staff-list': (context) => const StaffListScreen(),
+        '/staff-entry': (context) => const StaffEntryScreen(),
       },
     );
   }

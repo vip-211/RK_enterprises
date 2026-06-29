@@ -17,7 +17,7 @@ class InvoiceListScreen extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Create Invoice screen coming soon!')));
+              Navigator.pushNamed(context, '/invoice-entry');
             },
           ),
         ],

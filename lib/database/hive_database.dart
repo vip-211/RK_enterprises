@@ -6,6 +6,7 @@ import 'package:rk_enterprises/features/authentication/models/user_model.dart';
 import 'package:rk_enterprises/features/billing/models/invoice_model.dart';
 import 'package:rk_enterprises/features/purchases/models/purchase_model.dart';
 import 'package:rk_enterprises/features/expenses/models/expense_model.dart';
+import 'package:rk_enterprises/features/staff/models/staff_model.dart';
 
 class HiveBoxes {
   static const String users = 'usersBox';
@@ -15,6 +16,7 @@ class HiveBoxes {
   static const String invoices = 'invoicesBox';
   static const String purchases = 'purchasesBox';
   static const String expenses = 'expensesBox';
+  static const String staff = 'staffBox';
   // Add other boxes as we go
 }
 
@@ -32,6 +34,7 @@ class HiveDatabase {
     Hive.registerAdapter(PurchaseItemModelAdapter());
     Hive.registerAdapter(PurchaseModelAdapter());
     Hive.registerAdapter(ExpenseModelAdapter());
+    Hive.registerAdapter(StaffModelAdapter());
     
     await Future.wait([
       Hive.openBox<UserModel>(HiveBoxes.users),
@@ -41,6 +44,7 @@ class HiveDatabase {
       Hive.openBox<InvoiceModel>(HiveBoxes.invoices),
       Hive.openBox<PurchaseModel>(HiveBoxes.purchases),
       Hive.openBox<ExpenseModel>(HiveBoxes.expenses),
+      Hive.openBox<StaffModel>(HiveBoxes.staff),
     ]);
   }
 }

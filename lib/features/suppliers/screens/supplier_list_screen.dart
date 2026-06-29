@@ -18,7 +18,7 @@ class SupplierListScreen extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Add supplier screen coming soon!')));
+              Navigator.pushNamed(context, '/supplier-entry');
             },
           ),
         ],

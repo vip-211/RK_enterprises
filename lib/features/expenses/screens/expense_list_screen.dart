@@ -18,7 +18,7 @@ class ExpenseListScreen extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Create Expense screen coming soon!')));
+              Navigator.pushNamed(context, '/expense-entry');
             },
           ),
         ],

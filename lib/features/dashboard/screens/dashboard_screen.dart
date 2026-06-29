@@ -56,7 +56,7 @@ class DashboardScreen extends ConsumerWidget {
               title: const Text('Customers'),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const CustomerListScreen()));
+                Navigator.pushNamed(context, '/customer-list');
               },
             ),
             ListTile(
@@ -64,7 +64,15 @@ class DashboardScreen extends ConsumerWidget {
               title: const Text('Suppliers'),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const SupplierListScreen()));
+                Navigator.pushNamed(context, '/supplier-list');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.badge),
+              title: const Text('Staff'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/staff-list');
               },
             ),
             const Divider(),

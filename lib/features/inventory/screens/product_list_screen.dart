@@ -18,8 +18,7 @@ class ProductListScreen extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              // TODO: Navigate to AddProductScreen
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Add product screen coming soon!')));
+              Navigator.pushNamed(context, '/product-entry');
             },
           ),
         ],

@@ -18,7 +18,7 @@ class CustomerListScreen extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Add customer screen coming soon!')));
+              Navigator.pushNamed(context, '/customer-entry');
             },
           ),
         ],
